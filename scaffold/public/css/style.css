@@ -142,7 +142,6 @@ button[type="submit"] {
     width: 100%;
     height: 100%;
     column-count: 2;
-    column-gap: 30px;
 }
 
 .post-form, .posts-list {
@@ -202,7 +201,7 @@ button[type="submit"] {
     position: fixed;
     top: 100px;
     left: 20px;
-    border: 1px solid black;
+    border: 1px solid #0b141c;
     width: 150px;
     height: 150px;
     border-radius: 25px;
@@ -214,6 +213,26 @@ button[type="submit"] {
     top: 120px;
 }
 
+.post {
+    width: 45vw;
+    margin: 20px 50px 20px 0px;
+    box-shadow: 3px 3px 5px 2px#F896AB;
+    padding: 10px;
+
+}
+
+.post-avatar {
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 0;
+    margin: 10px;
+}
+
+hr.solid {
+    border-top: 1px solid #F34E7C;
+  }
 
 
 footer {
@@ -236,7 +255,7 @@ Lightest Pink: #F896AB
 Light Pink: #FDD9E0
 Pink: #F896AB
 Dark Pink: #F34E7C
-Light Yellow: #F34E7C
+Light Yellow: #F9E698
 Gold: #F7BA0C
 Gray: #9B9D9E
 

@@ -11,6 +11,7 @@
             <!-- everything that is shown in the status bar -->
             <!-- Heart = ♥ -->
             <!-- font awesome  trashcan = <i class="fas fa-trash-alt"> </i>-->
+            <hr class="solid class-divider">
             <button onclick="handleLikeClick(event)" data-id="{{postId}}" class="like-button">♥</button>
             <button onclick="handleDeleteClick(event)" data-id="{{postId}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
         </div>        
@@ -28,8 +29,8 @@
                 if (data.success) {
                     // Update the UI to reflect the new like count
                     console.log('Post liked successfully!');
-                    //let likes = parseInt(likeCountElement.textContent) || 0;
-                    //likeCountElement.textContent = likes + 1;  // Increment the like count in the UI    
+                    let likes = parseInt(likeCountElement.textContent) || 0;
+                    likeCountElement.textContent = likes + 1;  // Increment the like count in the UI    
 
                 } else {
                     console.log('Error liking post:', data.message);
