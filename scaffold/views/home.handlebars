@@ -52,6 +52,9 @@
 {{! JavaScript for Emoji Integration }}
 <script>
 
+const apiKey = '0960e467224eab16ed93d22d7f45378bc99177c1';
+const apiUrl = 'https://emoji-api.com/emojis';
+
 /*
  You want to show a subset of the emojis. About 200. However,
  you also want the user to be able to search all emojis,
@@ -68,17 +71,33 @@ function toggleEmojiPanel() {
 
     if(container.style.display === 'block' && allEmojis.length == 0){
         // go "Fetch" you some emojis and show them off with displayEmojies
+        fetchEmojis();
     }
 }
 
-function displayEmojis(emojis,limit=200) {
+async function fetchEmojis() { 
+    try {
+        const response = await fetch(`${apiUrl}?access_key=${apiKey}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch emojis');
+        }
+        const data = await response.json();
+        allEmojis = data;
+        displayEmojis(allEmojis); 
+    } catch (error) {
+        console.error('Error fetching the emojis:', error);
+        document.getElementById('emoji-grid').textContent = 'Error fetching the emojis.';
+    }
+}
+
+function displayEmojis(emojis, limit = 200) { 
     const container = document.getElementById('emoji-grid');
     container.innerHTML = '';  // Clear previous results
     if (Array.isArray(emojis) && emojis.length > 0) {
         emojis.slice(0, limit).forEach(emoji => {
             const emojiElement = document.createElement('span');
             emojiElement.textContent = emoji.character;
-            emojiElement.title = emoji.slug;  // Showing the emoji name on hover
+            emojiElement.title = emoji.unicodeName; 
             emojiElement.style.cursor = 'pointer';
             emojiElement.onclick = () => insertEmoji(emoji.character);
             container.appendChild(emojiElement);
@@ -88,22 +107,23 @@ function displayEmojis(emojis,limit=200) {
     }
 }
 
-function searchEmojis() {
-    const searchTerm = document.getElementById('emoji-search').value.toLowerCase();
-    // array.filter takes a predicate
-    // use string.includes. 
 
-    const filteredEmojis = allEmojis.filter(...);
-    
-    displayEmojis(filteredEmojis);
+function searchEmojis() {  
+    const searchTerm = document.getElementById('emoji-search').value.toLowerCase();
+    const filteredEmojis = allEmojis.filter(emoji => emoji.unicodeName.toLowerCase().includes(searchTerm)); 
+    displayEmojis(filteredEmojis);  
 }
 
-function insertEmoji(emoji) {
-    // put an emoji on a form somehow. 
-
-    // do this when you're doing getting the emoji on the form
-    //
+function insertEmoji(emoji) { 
+    const textarea = document.getElementById('content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    textarea.value = text.substring(0, start) + emoji + text.substring(end);
+    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
     textarea.focus();  // Keep focus on the textarea
 }
+
 </script>
+
 
