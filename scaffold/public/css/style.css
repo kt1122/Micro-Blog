@@ -214,11 +214,18 @@ button[type="submit"] {
 }
 
 .post {
+    display: flex;
+    flex-direction: column;
     width: 45vw;
     margin: 20px 50px 20px 0px;
     box-shadow: 3px 3px 5px 2px#F896AB;
     padding: 10px;
+}
 
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .post-avatar {
@@ -230,9 +237,30 @@ button[type="submit"] {
     margin: 10px;
 }
 
+.userName {
+    margin: 20px 0;
+}
+
+.post-content {
+    margin-bottom: 10px;
+}
+
+.status-display {
+    display: flex;
+    flex-direction: row;
+}
+
+.status-display * {
+    margin: 0px 10px;
+}
+
+.post-status-bar p {
+    font-size: 13px;
+}
+
 hr.solid {
     border-top: 1px solid #F34E7C;
-  }
+}
 
 
 footer {

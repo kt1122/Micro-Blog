@@ -1,21 +1,29 @@
 {{! Partial for a single post }}
 <div class="post">
-    <div class="post-avatar">
-        <!-- the user's avatar -->
-        <img src="{{user.avatar_url}}" alt="User Avatar">
+    <div class="post-header">
+        <div class="post-avatar">
+            <!-- the user's avatar -->
+            <img src="{{user.avatar_url}}" alt="User Avatar">
+        </div>
+        <h4 class="userName">{{post.username}}</h4>
     </div>
+    
     <div class="post-content preserve-newlines">
         <!-- the post -->
-        {{post.content}}
-        <div class="post-status-bar">
+        <p>{{post.content}}</p>       
+    </div>
+    <div class="post-status-bar">
             <!-- everything that is shown in the status bar -->
             <!-- Heart = ♥ -->
             <!-- font awesome  trashcan = <i class="fas fa-trash-alt"> </i>-->
             <hr class="solid class-divider">
-            <button onclick="handleLikeClick(event)" data-id="{{postId}}" class="like-button">♥</button>
-            <button onclick="handleDeleteClick(event)" data-id="{{postId}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
-        </div>        
-    </div>
+            <div class="status-display">
+                <button onclick="handleLikeClick(event)" data-id="{{postId}}" class="like-button">♥</button>
+                <button onclick="handleDeleteClick(event)" data-id="{{postId}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
+                <p id="like-count"></p><p> likes</p>
+                <p>Posted By {{post.username}} on {{post.timestamp}}</p>
+            </div>
+    </div> 
 </div>
 <script>
 
@@ -29,6 +37,7 @@
                 if (data.success) {
                     // Update the UI to reflect the new like count
                     console.log('Post liked successfully!');
+                    likeCountElement = document.getElementById("like-count")
                     let likes = parseInt(likeCountElement.textContent) || 0;
                     likeCountElement.textContent = likes + 1;  // Increment the like count in the UI    
 
