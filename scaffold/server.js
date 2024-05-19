@@ -75,9 +75,9 @@ app.use(
 // should be used in your template files. 
 // 
 app.use((req, res, next) => {
-    res.locals.appName = 'MicroBlog';
+    res.locals.appName = 'The Latin Piglet';
     res.locals.copyrightYear = 2024;
-    res.locals.postNeoType = 'Post';
+    res.locals.postNeoType = 'Oink';
     res.locals.loggedIn = req.session.loggedIn || false;
     res.locals.userId = req.session.userId || '';
     next();
@@ -124,30 +124,130 @@ app.get('/error', (req, res) => {
 
 app.get('/post/:id', (req, res) => {
     // TODO: Render post detail page
+    const postId = parseInt(req.params.id);
+    const post = posts.find(post => post.id === postId);
+    if (post) {
+        res.render('postDetail', { post });
+    } else {
+        res.redirect('/error?message=Post not found');
+    }
 });
+
+
 app.post('/posts', (req, res) => {
     // TODO: Add a new post and redirect to home
+    const { title, content } = req.body;
+    if (!title || !content) {
+        return res.redirect('/?error=Title+and+content+are+required');
+    }
+
+    addPost(title, content, findUserById(req.session.userId).username)
+    res.redirect('/');
 });
+
+
 app.post('/like/:id', (req, res) => {
     // TODO: Update post likes
+    const postId = parseInt(res.params.id);
+    const post = posts.find(post => post.id === postId);
+    if (post && req.session.userId !== post.username) {
+        posts.likes++;
+        res.json({ success: true, likes: post.likes});
+    } else {
+        res.redirect('/error?message=Cannot like your own post or post does not exist');
+    }
 });
+
+
 app.get('/profile', isAuthenticated, (req, res) => {
     // TODO: Render profile page
+    const currentUser = findUserById(req.session.userId);
+    if (!currentUser) {
+        return res.redirect('/login');
+    }
+
+    const userPosts = posts.filter(post => post.username === currentUser.username);
+    res.render('profile', {
+        user: currentUser,
+        posts: userPosts
+    });
 });
+
+
 app.get('/avatar/:username', (req, res) => {
     // TODO: Serve the avatar image for the user
+    const user = findUserByUsername(req.params.username);
+    if (!user) {
+        return res.status(404).send('User not found');
+    }
+
+    const avatar = generateAvatar(user.username[0]);  // Assuming first letter is used for avatar
+    res.setHeader('Content-Type', 'image/png');
+    res.send(avatar);
 });
+
+
 app.post('/register', (req, res) => {
     // TODO: Register a new user
+    const { username } = req.body;
+    
+    // Check if the user already exists
+    const userExists = findUserByUsername(username);
+    if (userExists) {
+        return res.redirect('/register?error=User+already+exists');
+    }
+
+    // Add the new user
+    const newUser = {
+        id: users.length + 1,
+        username,
+        memberSince: new Date().toISOString()
+    };
+    users.push(newUser);
+
+    // Log the user in (set session data)
+    req.session.userId = newUser.id;
+    req.session.loggedIn = true;
+
+    // Redirect to home page or profile page
+    res.redirect('/');
 });
+
+
 app.post('/login', (req, res) => {
     // TODO: Login a user
+    const { username } = req.body;
+
+    // Find user by username
+    const user = findUserByUsername(username);
+    if (user) {
+        req.session.userId = user.id;
+        req.session.loggedIn = true;
+        res.redirect('/');
+    } else {
+        res.redirect('/login?error=Invalid+credentials');
+    }
 });
+
+
 app.get('/logout', (req, res) => {
     // TODO: Logout the user
+    req.session.destroy(() => {
+        res.redirect('/');
+    })
 });
+
+
 app.post('/delete/:id', isAuthenticated, (req, res) => {
     // TODO: Delete a post if the current user is the owner
+    const postId = parseInt(req.params.id);
+    const postIndex = posts.findIndex(post => post.id === postId && post.username === req.session.userId);
+    if (postIndex !== -1) {
+        posts.splice(postIndex, 1);  // Remove the post from the array
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ success: false, message: "Post not found or user unauthorized" });
+    }
 });
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,11 +275,13 @@ let users = [
 // Function to find a user by username
 function findUserByUsername(username) {
     // TODO: Return user object if found, otherwise return undefined
+    return users.find(user => user.username === username);
 }
 
 // Function to find a user by user ID
 function findUserById(userId) {
     // TODO: Return user object if found, otherwise return undefined
+    return users.find(user => user.id === userId);
 }
 
 // Function to add a new user
@@ -200,36 +302,95 @@ function isAuthenticated(req, res, next) {
 // Function to register a user
 function registerUser(req, res) {
     // TODO: Register a new user and redirect appropriately
+    const { username } = req.body;
+    const existingUser = findUserByUsername(username);
+    if (existingUser) {
+        return res.redirect('/register?error=User+already+exists');
+    }
+
+    const newUser = {
+        id: users.length + 1,  // Simple way to generate a new ID
+        username: username,
+        memberSince: new Date().toISOString()
+    };
+
+    users.push(newUser);
+    req.session.userId = newUser.id;
+    req.session.loggedIn = true;
+    res.redirect('/');  // Redirect to home page after successful registration
 }
 
 // Function to login a user
 function loginUser(req, res) {
     // TODO: Login a user and redirect appropriately
+    const { username } = req.body;
+    const user = findUserByUsername(username);
+    if (user) {
+        req.session.userId = user.id;
+        req.session.loggedIn = true;
+        res.redirect('/');  // Redirect to home page after successful login
+    } else {
+        res.redirect('/login?error=Invalid+credentials');  // Redirect back to login with an error
+    }
 }
 
 // Function to logout a user
 function logoutUser(req, res) {
     // TODO: Destroy session and redirect appropriately
+    req.session.destroy(err => {
+        if (err) {
+            return res.redirect('/error');  // Redirect to an error page if session destruction fails
+        }
+        res.redirect('/login');  // Redirect to login page after successful logout
+    });
 }
 
 // Function to render the profile page
 function renderProfile(req, res) {
     // TODO: Fetch user posts and render the profile page
+    const currentUser = getCurrentUser(req);
+    if (!currentUser) {
+        return res.redirect('/login');
+    }
+    
+    const userPosts = posts.filter(post => post.username === currentUser.username);
+    res.render('profile', {
+        user: currentUser,
+        posts: userPosts
+    });
 }
 
 // Function to update post likes
 function updatePostLikes(req, res) {
     // TODO: Increment post likes if conditions are met
+    const postId = parseInt(req.params.id);
+    const post = posts.find(post => post.id === postId);
+    if (post && req.session.userId !== findUserById(req.session.userId).id) {
+        post.likes++;
+        res.json({ success: true, likes: post.likes });
+    } else {
+        res.redirect('/error?message=Cannot like your own post or post does not exist');
+    }
 }
 
 // Function to handle avatar generation and serving
 function handleAvatar(req, res) {
     // TODO: Generate and serve the user's avatar image
+    const user = findUserByUsername(req.params.username);
+    if (!user) {
+        res.status(404).send('User not found');
+        return;
+    }
+
+    const avatar = generateAvatar(user.username[0]);  // Assuming the avatar uses the first letter
+    res.setHeader('Content-Type', 'image/png');
+    res.send(avatar);
 }
 
 // Function to get the current user from session
 function getCurrentUser(req) {
     // TODO: Return the user object if the session user ID matches
+    return findUserById(req.session.userId);
 }
 
 // Function to get all posts, sorted by latest first
@@ -240,6 +401,16 @@ function getPosts() {
 // Function to add a new post
 function addPost(title, content, user) {
     // TODO: Create a new post object and add to posts array
+    const newPost = {
+        id: posts.length + 1,
+        title,
+        content,
+        username: user.username,
+        timestamp: new Date().toISOString(),
+        likes: 0
+    };
+    posts.push(newPost);
+    return newPost;
 }
 
 // Function to generate an image avatar
@@ -251,4 +422,20 @@ function generateAvatar(letter, width = 100, height = 100) {
     // 3. Draw the background color
     // 4. Draw the letter in the center
     // 5. Return the avatar as a PNG buffer
+
+    const canvas = canvas.createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Set background color
+    ctx.fillStyle = '#f4f4f4';  // Light grey background
+    ctx.fillRect(0, 0, width, height);
+
+    // Draw the letter
+    ctx.fillStyle = '#333';  // Dark text color
+    ctx.font = '48px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(letter.toUpperCase(), width / 2, height / 2);
+
+    return canvas.toBuffer();
 }

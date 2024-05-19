@@ -9,12 +9,14 @@
             <p style="color: red;">{{loginError}}</p>
         {{/if}}
         <form action="/login" method="POST">
-            <!-- the login form goes here -->        
+            <!-- the login form goes here -->   
+             <label>Username:</label>
+             <input type="text" name="username" required> <br>
              <button type="submit">Login</button>
         </form>
     </section>
 
-    <!-- say --OR-- ... with style -->
+    <h2 id="or"> --- OR --- </h2>
 
     <section class = "register-area">
         <h2>Register</h2>
@@ -24,6 +26,8 @@
         {{/if}}
         <form action="/register" method="POST">
             <!-- the registration form goes here -->
+            <label>Username:</label>
+            <input type="text" name="username" required> <br>
             <button type="submit">Register</button>
         </form>
     </section>

@@ -2,13 +2,17 @@
 <div class="post">
     <div class="post-avatar">
         <!-- the user's avatar -->
+        <img src="{{user.avatar_url}}" alt="User Avatar">
     </div>
     <div class="post-content preserve-newlines">
         <!-- the post -->
+        {{post.content}}
         <div class="post-status-bar">
             <!-- everything that is shown in the status bar -->
             <!-- Heart = ♥ -->
             <!-- font awesome  trashcan = <i class="fas fa-trash-alt"> </i>-->
+            <button onclick="handleLikeClick(event)" data-id="{{postId}}" class="like-button">♥</button>
+            <button onclick="handleDeleteClick(event)" data-id="{{postId}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
         </div>        
     </div>
 </div>
@@ -17,14 +21,41 @@
     function handleLikeClick(event) {
         const postId = event.target.getAttribute('data-id');
 
-        // you might want to "fetch" something...        
+        // you might want to "fetch" something...  AJAX call to server to like a post      
+        fetch('/like/' + postId, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the UI to reflect the new like count
+                    console.log('Post liked successfully!');
+                    //let likes = parseInt(likeCountElement.textContent) || 0;
+                    //likeCountElement.textContent = likes + 1;  // Increment the like count in the UI    
+
+                } else {
+                    console.log('Error liking post:', data.message);
+                }
+            })
+            .catch(error => console.log('Error:', error));
     }
 
     function handleDeleteClick(event) {
         const buttonElement = event.target.closest('.delete-button');
         const postId = buttonElement.getAttribute('data-id');        
 
-        // you might want to "fetch" something...        
-        
+        // you might want to "fetch" something...  AJAX call to server to delete a post      
+        const buttonElement = event.target.closest('.delete-button');
+        const postId = buttonElement.getAttribute('data-id');
+        fetch('/delete/' + postId, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optionally remove the post element from the DOM
+                    console.log('Post deleted successfully!');
+                    buttonElement.closest('.post').remove();
+                } else {
+                    console.log('Error deleting post:', data.message);
+                }
+            })
+            .catch(error => console.log('Error:', error));
     }    
 </script>

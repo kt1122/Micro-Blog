@@ -1,20 +1,25 @@
 {{! Use the main layout }}
 {{!< main }}
 
-<div class="profile-container">
-    <div class="profile-avatar">
-        <!-- Correct path for the default avatar image -->
-    </div>
-    
-    <section class="profile-info">
-        <!-- user profile info -->
-    </section>
-</div>
+<div class="profilePost-container">
+    <div class="profile-container">
+        <div class="profile-avatar">
+            <!-- Correct path for the default avatar image -->
+            <img src="{{user.avatar_url}}" alt="User Avatar">
+        </div>
 
-<section class="user-posts">
+        <section class="profile-info">
+            <!-- user profile info -->
+            <h2>User Profile</h2>
+            <p><strong>Username:</strong> {{user.username}}</p>
+            <p><strong>Member since:</strong> {{user.memberSince}}</p>
+        </section>
+    </div>
+
+    <section class="user-posts">
     <!-- you can call posts tweets, or truths, or whatever, these are neologisms. Choose your own new in server.js -->
     <h2>Your {{{postNeoType}}}s</h2>
-    
+
     <!-- you'll need to make this conditaionl and #each expression work -->
     {{#if user.posts.length}}
         <ul>
@@ -26,4 +31,5 @@
         <!-- fix this up with some helper functions and other handlebars expressions, or add you own character -->
         <p>You have not posted yet, poster.</p>
     {{/if}}
-</section>
+    </section>
+</div>
