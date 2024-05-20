@@ -11,7 +11,7 @@ html {
 
 body {
     /* top, right, bottom, left */
-    padding: 100px 0px 30px 30px;
+    padding: 100px 0px 0px 30px;
 
     display: flex;
     justify-content: center;
@@ -68,6 +68,10 @@ nav ul li a {
     color: #FBFBF3;
     text-decoration: none;
     font-weight: bold;
+}
+
+nav ul li a:hover {
+    border-bottom: 2px solid #F34E7C;
 }
 
 .header-avatar {
@@ -138,10 +142,15 @@ button[type="submit"] {
 
 .content-container {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     width: 100%;
     height: 100%;
     column-count: 2;
+}
+
+.post-form {
+    margin-bottom: 30px;
 }
 
 .post-form, .posts-list {
@@ -277,6 +286,104 @@ footer {
     width: 100%;
 }
 
+
+@media (max-width: 830px) {
+    body {
+        padding: 140px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 120px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        margin-left: 60px;
+    }
+
+    .login-register {
+        flex-direction: column;
+    }
+
+    nav ul li {
+        margin: 0px 10px;
+        font-size: 13px;
+    }
+
+    .content-container {
+        flex-direction: column;
+        align-items: center;
+        column-count: 1;
+    }
+
+    .post-form, .post {
+        width: 85vw;
+    }
+
+    .post-form textarea {
+        width: 85vw;
+        max-width: 85vw;
+        min-height: 80px;
+        max-height: 300px;
+    }
+
+    .post-form h3 {
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 90px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 75px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        color: black;
+        font-size: 20px;
+        margin-left: 20px;
+    }
+
+    nav ul li {
+        margin: 0px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 110px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 100px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        color: #F34E7C;
+        font-size: 20px;
+        margin-left: 40px;
+    }
+
+    nav ul li {
+        margin: 0px 5px;
+        font-size: 10px;
+    }
+}
 
 
 /*
