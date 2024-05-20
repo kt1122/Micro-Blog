@@ -97,8 +97,9 @@ app.use(express.json());                            // Parse JSON bodies (as sen
 //
 app.get('/', (req, res) => {
     const posts = getPosts();
+    const users = getUsers(); // Get all users
     const user = getCurrentUser(req) || {};
-    res.render('home', { posts, user });
+    res.render('home', { posts, users, user });
 });
 
 // Register GET route is used for error response from registration
@@ -270,6 +271,11 @@ function findUserById(userId) {
     return users.find(user => user.id === userId);
 }
 
+// Function to get all users
+function getUsers() {
+    return users;
+}
+
 // Function to add a new user
 function addUser(username) {
     // TODO: Create a new user object and add to users array
@@ -361,6 +367,7 @@ function updatePostLikes(req, res) {
 
 // Function to generate an image avatar
 let colors = ["#2D5D7B", "#80CED7", "#B2CEDE", "#8CDFD6", "#46B1C9", "#6DC0D5", "#837CB6", "#68A357", "#D4FCC3"]
+
 function generateAvatar(letter, width = 100, height = 100) {
     try {
         const canvas = createCanvas(width, height);
