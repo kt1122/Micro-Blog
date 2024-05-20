@@ -23,7 +23,7 @@
             {{else}}
                 <button onclick="handleLikeClick(event)" data-id="{{id}}" class="like-button">♥</button> 
             {{/ifCond}}
-            <p>{{likes}} likes</p>
+            <p class="likes-count">{{likes}} likes</p>
             <p>Posted By {{username}} on {{timestamp}}</p>
         </div>
     </div>
@@ -43,9 +43,11 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                buttonElement.innerText = `♥ ${data.likes}`;
+                // Update the likes count
+                const likesCountElement = document.querySelector(`.post[data-id="${postId}"] .likes-count`);
+                likesCountElement.innerText = `${data.likes} likes`;
             } else {
-                alert('You have already liked this post or you are not logged in.');
+                alert(data.message || 'Failed to like the post.');
             }
         })
         .catch(error => console.error('Error:', error));
