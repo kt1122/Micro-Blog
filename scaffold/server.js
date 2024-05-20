@@ -360,15 +360,16 @@ function updatePostLikes(req, res) {
 }
 
 // Function to generate an image avatar
+let colors = ["#2D5D7B", "#80CED7", "#B2CEDE", "#8CDFD6", "#46B1C9", "#6DC0D5", "#837CB6", "#68A357", "#D4FCC3"]
 function generateAvatar(letter, width = 100, height = 100) {
     try {
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
 
-        ctx.fillStyle = '#f8c596'; // background color
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]; // background color
         ctx.fillRect(0, 0, width, height);
 
-        ctx.fillStyle = '#F896AB';  // text color
+        ctx.fillStyle = '#FBFBF3';  // text color
         ctx.font = 'bold 48px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
