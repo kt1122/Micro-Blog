@@ -10,7 +10,7 @@
     
     <div class="post-content preserve-newlines">
         <!-- the post -->
-        <p>{{post.content}}</p>       
+        <p>{{content}}</p>       
     </div>
     <div class="post-status-bar">
             <!-- everything that is shown in the status bar -->
@@ -18,54 +18,53 @@
             <!-- font awesome  trashcan = <i class="fas fa-trash-alt"> </i>-->
             <hr class="solid class-divider">
             <div class="status-display">
-                <button onclick="handleLikeClick(event)" data-id="{{postId}}" class="like-button">♥</button>
-                <button onclick="handleDeleteClick(event)" data-id="{{postId}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
-                <p id="like-count"></p><p> likes</p>
+                <button onclick="handleLikeClick(event)" data-id="{{post.id}}" class="like-button">♥</button>
+                <button onclick="handleDeleteClick(event)" data-id="{{post.id}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
+                <p id="like-count">{{post.likes}}</p><p> likes</p>
                 <p>Posted By {{post.username}} on {{post.timestamp}}</p>
             </div>
     </div> 
 </div>
-<script>
 
+<script>
     function handleLikeClick(event) {
         const postId = event.target.getAttribute('data-id');
 
-        // you might want to "fetch" something...  AJAX call to server to like a post      
-        fetch('/like/' + postId, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the UI to reflect the new like count
-                    console.log('Post liked successfully!');
-                    likeCountElement = document.getElementById("like-count")
-                    let likes = parseInt(likeCountElement.textContent) || 0;
-                    likeCountElement.textContent = likes + 1;  // Increment the like count in the UI    
-
-                } else {
-                    console.log('Error liking post:', data.message);
-                }
-            })
-            .catch(error => console.log('Error:', error));
+        fetch(`/like/${postId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                event.target.innerText = `♥ ${data.likes}`;
+            } else {
+                alert('Failed to like the post.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function handleDeleteClick(event) {
         const buttonElement = event.target.closest('.delete-button');
-        const postId = buttonElement.getAttribute('data-id');        
-
-        // you might want to "fetch" something...  AJAX call to server to delete a post      
-        const buttonElement = event.target.closest('.delete-button');
         const postId = buttonElement.getAttribute('data-id');
-        fetch('/delete/' + postId, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Optionally remove the post element from the DOM
-                    console.log('Post deleted successfully!');
-                    buttonElement.closest('.post').remove();
-                } else {
-                    console.log('Error deleting post:', data.message);
-                }
-            })
-            .catch(error => console.log('Error:', error));
-    }    
+
+        fetch(`/delete/${postId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.querySelector(`.post[data-id="${postId}"]`).remove();
+            } else {
+                alert('Failed to delete the post.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
 </script>

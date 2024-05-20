@@ -147,7 +147,6 @@ app.post('/posts', (req, res) => {
 
 
 app.post('/like/:id', (req, res) => {
-    // TODO: Update post likes
     const postId = parseInt(res.params.id);
     const post = posts.find(post => post.id === postId);
     if (post && req.session.userId !== post.username) {
@@ -274,13 +273,11 @@ let users = [
 
 // Function to find a user by username
 function findUserByUsername(username) {
-    // TODO: Return user object if found, otherwise return undefined
     return users.find(user => user.username === username);
 }
 
 // Function to find a user by user ID
 function findUserById(userId) {
-    // TODO: Return user object if found, otherwise return undefined
     return users.find(user => user.id === userId);
 }
 
@@ -317,20 +314,20 @@ function registerUser(req, res) {
     users.push(newUser);
     req.session.userId = newUser.id;
     req.session.loggedIn = true;
-    res.redirect('/');  // Redirect to home page after successful registration
+    res.redirect('/');
 }
 
 // Function to login a user
 function loginUser(req, res) {
-    // TODO: Login a user and redirect appropriately
-    const { username } = req.body;
+    const username = req.body;
     const user = findUserByUsername(username);
+    
     if (user) {
         req.session.userId = user.id;
         req.session.loggedIn = true;
-        res.redirect('/');  // Redirect to home page after successful login
+        res.redirect('/');
     } else {
-        res.redirect('/login?error=Invalid+credentials');  // Redirect back to login with an error
+        res.redirect('/login?error=Invalid+username');
     }
 }
 
@@ -389,7 +386,6 @@ function handleAvatar(req, res) {
 
 // Function to get the current user from session
 function getCurrentUser(req) {
-    // TODO: Return the user object if the session user ID matches
     return findUserById(req.session.userId);
 }
 
@@ -399,13 +395,12 @@ function getPosts() {
 }
 
 // Function to add a new post
-function addPost(title, content, user) {
-    // TODO: Create a new post object and add to posts array
+function addPost(title, content, username) {
     const newPost = {
         id: posts.length + 1,
         title,
         content,
-        username: user.username,
+        username,
         timestamp: new Date().toISOString(),
         likes: 0
     };
