@@ -263,8 +263,8 @@ app.listen(PORT, () => {
 
 // Example data for posts and users
 let posts = [
-    { id: 1, title: 'Sample Post', content: 'isthay isyay ayay amplesay ostpay.', username: 'SampleUser', timestamp: '2024-01-01 10:00', likes: 0 },
-    { id: 2, title: 'Another Post', content: 'This is another sample post.', username: 'AnotherUser', timestamp: '2024-01-02 12:00', likes: 0 },
+    { id: 1, title: 'igpay atinlay', content: 'isthay isyay ayay amplesay ostpay.', username: 'SampleUser', timestamp: '2024-01-01 10:00', likes: 0 },
+    { id: 2, title: 'Teacup Pigs!', content: 'Have you ever *seen* a teacup pig?! They\'re adorable!', username: 'AnotherUser', timestamp: '2024-01-02 12:00', likes: 0 },
 ];
 let users = [
     { id: 1, username: 'SampleUser', avatar_url: undefined, memberSince: '2024-01-01 08:00' },
