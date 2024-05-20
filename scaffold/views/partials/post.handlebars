@@ -19,10 +19,13 @@
             <!-- font awesome  trashcan = <i class="fas fa-trash-alt"> </i>-->
             <hr class="solid class-divider">
             <div class="status-display">
-                <button onclick="handleLikeClick(event)" data-id="{{post.id}}" class="like-button">♥</button>
+                {{#ifCond username user.username}}
                 <button onclick="handleDeleteClick(event)" data-id="{{post.id}}" class="delete-button"><i class="fas fa-trash-alt"></i></button>
-                <p id="like-count">{{post.likes}}</p><p> likes</p>
-                <p>Posted By {{post.username}} on {{post.timestamp}}</p>
+                {{else}}
+                    <button onclick="handleLikeClick(event)" data-id="{{post.id}}" class="like-button">♥</button>   
+                {{/ifCond}}
+                <p>{{likes}} likes</p>
+                <p>Posted By {{username}} on {{timestamp}}</p>
             </div>
     </div> 
 </div>
