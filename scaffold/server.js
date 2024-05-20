@@ -122,19 +122,6 @@ app.get('/error', (req, res) => {
 
 // Additional routes that you must implement
 
-
-app.get('/post/:id', (req, res) => {
-    // TODO: Render post detail page
-    const postId = parseInt(req.params.id);
-    const post = posts.find(post => post.id === postId);
-    if (post) {
-        res.render('postDetail', { post });
-    } else {
-        res.redirect('/error?message=Post not found');
-    }
-});
-
-
 app.post('/posts', (req, res) => {
     // TODO: Add a new post and redirect to home
     const { title, content } = req.body;
@@ -240,7 +227,7 @@ app.get('/logout', (req, res) => {
 });
 
 
-app.delete('/delete/:id', isAuthenticated, (req, res) => {
+app.post('/delete/:id', isAuthenticated, (req, res) => {
     // TODO: Delete a post if the current user is the owner
     const postId = parseInt(req.params.id);
     const postIndex = posts.findIndex(post => post.id === postId && post.username === findUserById(req.session.userId).username);
