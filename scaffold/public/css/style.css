@@ -11,7 +11,7 @@ html {
 
 body {
     /* top, right, bottom, left */
-    padding: 100px 0px 30px 30px;
+    padding: 100px 0px 0px 30px;
 
     display: flex;
     justify-content: center;
@@ -60,7 +60,7 @@ nav ul {
 }
 
 nav ul li {
-    margin: 0px 5px;
+    margin: 0px 12px;
     font-size: 14px;
 }
 
@@ -68,6 +68,10 @@ nav ul li a {
     color: #FBFBF3;
     text-decoration: none;
     font-weight: bold;
+}
+
+nav ul li a:hover {
+    border-bottom: 2px solid #F34E7C;
 }
 
 .header-avatar {
@@ -138,11 +142,15 @@ button[type="submit"] {
 
 .content-container {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     width: 100%;
     height: 100%;
     column-count: 2;
-    column-gap: 30px;
+}
+
+.post-form {
+    margin-bottom: 30px;
 }
 
 .post-form, .posts-list {
@@ -202,7 +210,7 @@ button[type="submit"] {
     position: fixed;
     top: 100px;
     left: 20px;
-    border: 1px solid black;
+    border: 1px solid #0b141c;
     width: 150px;
     height: 150px;
     border-radius: 25px;
@@ -214,6 +222,57 @@ button[type="submit"] {
     top: 120px;
 }
 
+.post {
+    display: flex;
+    flex-direction: column;
+    width: 45vw;
+    margin: 20px 50px 20px 0px;
+    box-shadow: 3px 3px 5px 2px#F896AB;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.post-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.post-avatar {
+    width: 60px;
+    height: 60px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 0;
+    margin: 10px;
+}
+
+.post-title {
+    margin: 20px 0;
+    color: #F34E7C;
+}
+
+.post-content {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.status-display {
+    display: flex;
+    flex-direction: row;
+}
+
+.status-display * {
+    margin: 0px 10px;
+}
+
+.post-status-bar p {
+    font-size: 13px;
+}
+
+hr.solid {
+    border-top: 1px solid #F34E7C;
+}
 
 
 footer {
@@ -228,6 +287,104 @@ footer {
 }
 
 
+@media (max-width: 830px) {
+    body {
+        padding: 140px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 120px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        margin-left: 60px;
+    }
+
+    .login-register {
+        flex-direction: column;
+    }
+
+    nav ul li {
+        margin: 0px 10px;
+        font-size: 13px;
+    }
+
+    .content-container {
+        flex-direction: column;
+        align-items: center;
+        column-count: 1;
+    }
+
+    .post-form, .post {
+        width: 85vw;
+    }
+
+    .post-form textarea {
+        width: 85vw;
+        max-width: 85vw;
+        min-height: 80px;
+        max-height: 300px;
+    }
+
+    .post-form h3 {
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 90px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 75px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        color: black;
+        font-size: 20px;
+        margin-left: 20px;
+    }
+
+    nav ul li {
+        margin: 0px 8px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 110px 30px 0px 30px;
+    }
+
+    .header-logo {
+        height: 100px;
+        width: auto;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    #appName {
+        color: #F34E7C;
+        font-size: 20px;
+        margin-left: 40px;
+    }
+
+    nav ul li {
+        margin: 0px 5px;
+        font-size: 10px;
+    }
+}
+
 
 /*
 Color Palettes:
@@ -236,7 +393,7 @@ Lightest Pink: #F896AB
 Light Pink: #FDD9E0
 Pink: #F896AB
 Dark Pink: #F34E7C
-Light Yellow: #F34E7C
+Light Yellow: #F9E698
 Gold: #F7BA0C
 Gray: #9B9D9E
 
