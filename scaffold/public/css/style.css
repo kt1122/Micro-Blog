@@ -220,12 +220,13 @@ button[type="submit"] {
     margin: 20px 50px 20px 0px;
     box-shadow: 3px 3px 5px 2px#F896AB;
     padding: 10px;
+    border-radius: 15px;
 }
 
-.post-header {
+.post-text {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
 }
 
 .post-avatar {
@@ -237,12 +238,13 @@ button[type="submit"] {
     margin: 10px;
 }
 
-.userName {
+.post-title {
     margin: 20px 0;
 }
 
 .post-content {
     margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .status-display {
