@@ -148,15 +148,28 @@ app.post('/posts', (req, res) => {
 
 
 app.post('/like/:id', (req, res) => {
+    if (!req.session.userId) {
+        return res.json({ success: false, message: 'You must be logged in to like a post.' });
+    }
+
     const postId = parseInt(req.params.id);
     const post = posts.find(post => post.id === postId);
-    if (post && req.session.userId !== post.username) {
+
+    // Initialize likedPosts in session if it doesn't exist
+    if (!req.session.likedPosts) {
+        req.session.likedPosts = [];
+    }
+
+    if (post && !req.session.likedPosts.includes(postId)) {
         post.likes++;
-        res.json({ success: true, likes: post.likes});
+        req.session.likedPosts.push(postId); // Add the post ID to the session's likedPosts array
+        res.json({ success: true, likes: post.likes });
     } else {
-        res.redirect('/error?message=Cannot like your own post or post does not exist');
+        res.json({ success: false, message: 'You have already liked this post or post does not exist.' });
     }
 });
+
+
 
 
 app.get('/profile', isAuthenticated, (req, res) => {

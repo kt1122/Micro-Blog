@@ -45,7 +45,7 @@
             if (data.success) {
                 buttonElement.innerText = `♥ ${data.likes}`;
             } else {
-                alert('Failed to like the post.');
+                alert('You have already liked this post or you are not logged in.');
             }
         })
         .catch(error => console.error('Error:', error));
