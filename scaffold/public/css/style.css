@@ -59,7 +59,7 @@ footer {
 }
 
 #appName {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
 
@@ -186,6 +186,11 @@ button[type="submit"] {
     border: 1px solid #F896AB !important;
     border-radius: 5px;
     width: 100%;
+    outline: 0;
+}
+
+.input-field:focus, input:focus {
+    outline: 2px solid #F34E7C;
 }
 
 #content {
@@ -199,6 +204,10 @@ button[type="submit"] {
 
 .form-actions button {
     margin: 5px;
+}
+
+.selected-btn {
+    background-color: #FFCFCF;
 }
 
 .posts-list ul {
@@ -220,7 +229,6 @@ button[type="submit"] {
     position: fixed;
     top: 100px;
     left: 20px;
-    border: 1px solid #0b141c;
     width: 150px;
     height: 150px;
     border-radius: 25px;
@@ -285,7 +293,7 @@ button[type="submit"] {
 .post-avatar-container {
     width: 60px;
     height: 60px;
-    border: 1px solid black;
+    border: 1px solid #F34E7C;
     border-radius: 10px;
     overflow: hidden; /* Ensures the image doesn't overflow the container */
     padding: 0;
@@ -330,14 +338,42 @@ hr.solid {
     border-top: 1px solid #F34E7C;
 }
 
+/* Adjust for column layout */
+@media (max-width: 1080px) {
+    .content-container {
+        flex-direction: column;
+        align-items: center;
+        column-count: 1;
+    }
 
-@media (max-width: 830px) {
+    .post-form, .post {
+        width: 65vw;
+    }
+
+    .post-form textarea {
+        width: 65vw;
+        max-width: 65vw;
+        min-height: 80px;
+        max-height: 300px;
+    }
+
+    .post-form h3 {
+        text-align: center;
+    }
+
+    .posts-list h2 {
+        text-align: center;
+    }
+}
+
+/* small window screen */
+@media (max-width: 800px) {
     body {
         padding: 140px 30px 0px 30px;
     }
 
     .header-logo {
-        height: 120px;
+        height: 76px;
         width: auto;
         position: fixed;
         top: 0;
@@ -345,8 +381,10 @@ hr.solid {
     }
 
     #appName {
-        margin-left: 60px;
+        font-size: 25px;
+        margin-left: 40px;
     }
+    
 
     .login-register {
         flex-direction: column;
@@ -357,35 +395,26 @@ hr.solid {
         font-size: 13px;
     }
 
-    .content-container {
-        flex-direction: column;
-        align-items: center;
-        column-count: 1;
-    }
-
     .post-form, .post {
-        width: 85vw;
+        width: 75vw;
     }
 
     .post-form textarea {
-        width: 85vw;
-        max-width: 85vw;
+        width: 75vw;
+        max-width: 75vw;
         min-height: 80px;
         max-height: 300px;
     }
-
-    .post-form h3 {
-        text-align: center;
-    }
 }
 
-@media (max-width: 600px) {
+/* minimum desktop width */
+@media (max-width: 700px) {
     body {
         padding: 90px 30px 0px 30px;
     }
 
     .header-logo {
-        height: 75px;
+        height: 76px;
         width: auto;
         position: fixed;
         top: 0;
@@ -394,8 +423,8 @@ hr.solid {
 
     #appName {
         color: black;
-        font-size: 20px;
-        margin-left: 20px;
+        font-size: 18px;
+        margin-left: 15px;
     }
 
     nav ul li {
@@ -404,6 +433,7 @@ hr.solid {
     }
 }
 
+/* phone dimensions */
 @media (max-width: 480px) {
     body {
         padding: 110px 30px 0px 30px;
@@ -450,5 +480,4 @@ Moonstone Blue: #46B1C9
 Sky Blue: #6DC0D5
 Tropical Indigo: #837CB6
 Green: #68A357
-Tea Green: #D4FCC3
 */

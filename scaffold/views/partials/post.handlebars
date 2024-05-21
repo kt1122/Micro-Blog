@@ -32,6 +32,7 @@
 <script>
     function handleLikeClick(event) {
         const buttonElement = event.target;
+        buttonElement.classList.add('selected-btn');
         const postId = buttonElement.getAttribute('data-id');
 
         fetch(`/like/${postId}`, {
@@ -47,14 +48,15 @@
                 const likesCountElement = document.querySelector(`.post[data-id="${postId}"] .likes-count`);
                 likesCountElement.innerText = `${data.likes} likes`;
             } else {
-                alert(data.message || 'Failed to like the post.');
+                console.log(data.message || 'Failed to like the post.');
             }
         })
         .catch(error => console.error('Error:', error));
     }
 
     function handleDeleteClick(event) {
-        const buttonElement = event.target.closest('.delete-button'); 
+        const buttonElement = event.target.closest('.delete-button');
+        buttonElement.classList.add('selected-btn'); 
         const postId = buttonElement.getAttribute('data-id'); 
 
         fetch(`/delete/${postId}`, {
@@ -68,7 +70,7 @@
             if (data.success) {
                 document.querySelector(`.post[data-id="${postId}"]`).remove();
             } else {
-                alert('Failed to delete the post.');
+                console.log('Failed to delete the post.');
             }
         })
         .catch(error => console.error('Error:', error));

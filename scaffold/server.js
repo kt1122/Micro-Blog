@@ -366,7 +366,7 @@ function updatePostLikes(req, res) {
 }
 
 // Function to generate an image avatar
-let colors = ["#2D5D7B", "#80CED7", "#B2CEDE", "#8CDFD6", "#46B1C9", "#6DC0D5", "#837CB6", "#68A357", "#D4FCC3"]
+let colors = ["#2D5D7B", "#80CED7", "#B2CEDE", "#8CDFD6", "#46B1C9", "#6DC0D5", "#837CB6", "#68A357"]
 
 function generateAvatar(letter, width = 100, height = 100) {
     try {
