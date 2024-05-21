@@ -2,7 +2,7 @@ const express = require('express');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const { createCanvas } = require('canvas');
-
+require('dotenv').config();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Configuration and Setup
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +99,8 @@ app.get('/', (req, res) => {
     const posts = getPosts();
     const users = getUsers(); // Get all users
     const user = getCurrentUser(req) || {};
-    res.render('home', { posts, users, user });
+    const apiKey = process.env.EMOJI_API_KEY;
+    res.render('home', { posts, users, user, apiKey });
 });
 
 // Register GET route is used for error response from registration
