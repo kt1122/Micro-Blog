@@ -281,7 +281,7 @@ button[type="submit"] {
     position: sticky;
     display: flex;
     flex-direction: row;
-    height: 500px; 
+    height: 550px; 
     overflow-y: auto; 
 }
 
@@ -363,6 +363,7 @@ hr.solid {
     }
 
     .posts-list h2 {
+        margin-top: 0;
         text-align: center;
     }
 }
