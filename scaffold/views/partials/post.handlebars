@@ -26,10 +26,12 @@
             <p class="likes-count">{{likes}} likes</p>
             <p>Posted By {{username}} on {{timestamp}}</p>
         </div>
+        <button onclick="handlePigLatinClick(event)" id="pigLatin" data-id="{{id}}" data-translated="false">To PigLatin! 🐷</button>
     </div>
 </div>
 
 <script>
+
     function handleLikeClick(event) {
         const buttonElement = event.target;
         buttonElement.classList.add('selected-btn');
@@ -75,4 +77,58 @@
         })
         .catch(error => console.error('Error:', error));
     }
+
+    function translateToPigLatin(text) {
+        // Regular expression to identify punctuation at the end of a word
+        const punctuationRegex = /[.,/#!$%\^&\*;:{}=\-_`~()?\[\]"'<>]+$/;
+
+        return text.split(' ').map(word => {
+            let endPunctuation = '';
+            const punctuationMatch = word.match(punctuationRegex);
+
+            // Check if there's punctuation at the end of the word
+            if (punctuationMatch) {
+                endPunctuation = punctuationMatch[0];
+                word = word.slice(0, -endPunctuation.length); // Remove the punctuation from the word
+            }
+
+            const firstVowel = word.match(/[aeiou]/i);
+            if (firstVowel) {
+                const vowelIndex = word.indexOf(firstVowel[0]);
+                if (vowelIndex === 0) {
+                    return word + 'way' + endPunctuation;  // Add punctuation back after translation
+                } else {
+                    return word.slice(vowelIndex) + word.slice(0, vowelIndex) + 'ay' + endPunctuation;  // Add punctuation back after translation
+                }
+            }
+            return word + endPunctuation; // Return the word with punctuation if no translation occurred
+    }).join(' ');
+    }
+
+    function handlePigLatinClick(event) {
+        const pigBtnElement = event.target;
+        const postId = pigBtnElement.getAttribute('data-id');
+        const postContentElement = document.querySelector(`.post[data-id="${postId}"] .post-content p`);
+
+        if (postContentElement) {
+            let isTranslated = pigBtnElement.getAttribute('data-translated') === 'true';
+            if (!isTranslated) {
+                // Store the original text if not already translated
+                const originalText = postContentElement.innerText;
+                const translatedText = translateToPigLatin(originalText);
+                postContentElement.innerText = translatedText;
+                pigBtnElement.setAttribute('data-translated', 'true');
+                // pigBtnElement.setAttribute('data-original-text', originalText); // Store original text
+                pigBtnElement.innerText = "To English 🔤"; // Change button text to 'To English'
+            } else {
+                // Retrieve the original text from the data-original-text attribute
+                // const originalText = pigBtnElement.getAttribute('data-original-text');
+                // postContentElement.innerText = originalText;
+                // pigBtnElement.setAttribute('data-translated', 'false');
+                pigBtnElement.innerText = "To Pig Latin 🐷"; // Change button text to 'To Pig Latin'
+            }
+        }
+    }
+
+   
 </script>

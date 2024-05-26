@@ -12,7 +12,22 @@
             <h2>User Profile</h2>
             <p><strong>Username:</strong> {{user.username}}</p>
             <p><strong>Member since:</strong> {{user.memberSince}}</p>
+            <button id="deleteAccountBtn">Delete Account</button>
         </section>
+    </div>
+
+    <div id="delete-account-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn">&times;</span>
+            <h3>Now just a minute.</h3>
+            <p>Are you sure you want to delete your entire account? You'll lose your username 
+                and your posts forever, and we bet your content will be missed.</p>
+            <p> If you're sure, confirm by typing "delete" below. Check the box if you want to leave your posts up 
+                and orphan them instead of deleting them.</p>
+            <input type="text" id="delete-confirmation" placeholder="delete"> <br>
+            <input type="checkbox" id="orphan-posts"><label for="orphan-posts">Orphan all posts </label> <br> <br>
+            <button id="modal-confirm-btn">Confirm</button>
+        </div>
     </div>
 
     <div class="profilePost-container">
@@ -34,3 +49,41 @@
         </section>
     </div>
 </div>
+
+<script>
+    var modal = document.getElementById("delete-account-modal");
+    var showModalBtn = document.getElementById("deleteAccountBtn");
+    var closeModalBtn = document.getElementById("close-modal-btn");
+    var confirmBtn = document.getElementById("modal-confirm-btn");
+    var deleteConfirmationInput = document.getElementById("delete-confirmation");
+    var orphanPostsCheckbox = document.getElementById("orphan-posts");
+
+    showModalBtn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    closeModalBtn.onclick = function() {
+        modal.style.display = "none";
+    }   
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    confirmBtn.onclick = function() {
+        var confirmationText = deleteConfirmationInput.value;
+        var orphanPosts = orphanPostsCheckbox.checked;
+
+        if (confirmationText === "delete") {
+            // Perform the account deletion process
+            // Access all of user's posts and change the user linked the posts to "Orphaned Account"
+
+            console.log("Account deletion confirmed.");
+            modal.style.display = "none";
+        } else {
+            alert("Please type 'delete' to confirm");
+        }
+    }
+</script>

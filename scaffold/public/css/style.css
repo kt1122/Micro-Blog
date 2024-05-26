@@ -134,6 +134,16 @@ button {
     border: none;
 }
 
+#pigLatin {
+    width: 100%;
+    height: 35px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#pigLatin:hover {
+    background-color: #F34E7C;
+}
 
 button[type="submit"] {
     background-color: #F896AB;
@@ -142,6 +152,10 @@ button[type="submit"] {
     border-radius: 4px;
     cursor: pointer;
     border: none;
+}
+
+#deleteAccountBtn, #modal-confirm-btn {
+    width: 100px;
 }
 
 /* Styling for error messages, assuming they have a class for errors */
@@ -178,7 +192,7 @@ button[type="submit"] {
     width: 45vw;
 }
 
-.recentOinks
+.recents
 {
     margin-top: auto;
 }
@@ -347,6 +361,48 @@ button[type="submit"] {
 hr.solid {
     border-top: 1px solid #F34E7C;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;     /* Sit on top */
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #FBFBF3;
+    margin: auto;
+    padding: 25px;
+    width: 50%;
+}
+
+.modal-content p, .modal-content h3 {
+    text-align: center;
+}
+
+.modal-content input[type="text"] {
+    border: 2px solid #F34E7C;
+}
+
+#close-modal-btn {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#close-modal-btn:hover, #close-modal-btn:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 
 /* Adjust for column layout */
 @media (max-width: 1080px) {
