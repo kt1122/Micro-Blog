@@ -3,13 +3,56 @@ const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const { createCanvas } = require('canvas');
 const initializeDB = require('./populatedb')
-require('dotenv').config();
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const dotenv = require('dotenv');
+dotenv.config();
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Configuration and Setup
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 const app = express();
 const PORT = 3000;
+
+
+const CLIENT_ID = '513266850474-mk0caohdbcmt358l0s88lsgofb8n5k3c.apps.googleusercontent.com'
+const CLIENT_SECRET = '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';
+const EMOJI_API_KEY = '0960e467224eab16ed93d22d7f45378bc99177c1'
+
+passport.use(new GoogleStrategy({
+    clientID: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
+    callbackURL: `http://localhost:${PORT}/auth/google/callback`
+}, (accessToken, refreshToken, profile, done) => {
+    findOrCreateUser(profile, done);
+}));
+
+function findOrCreateUser(profile, done) {
+    // Placeholder for user search by Google ID or email
+    let user = users.find(u => u.googleId === profile.id);
+
+    if (!user) {
+        user = {
+            id: users.length + 1, // increment for new user
+            username: profile.displayName,
+            googleId: profile.id, // save Google ID for future logins
+            memberSince: new Date().toISOString()
+        };
+        users.push(user);
+    }
+
+    done(null, user);
+}
+
+passport.serializeUser((user, done) => {
+    done(null, user.id); // Serialize by user.id assumed to be unique
+});
+
+passport.deserializeUser((id, done) => {
+    const user = users.find(u => u.id === id); // Deserialize the session by searching for the id
+    done(null, user);
+});
 
 async function startServer() {
     try {
@@ -23,6 +66,7 @@ async function startServer() {
 }
 
 startServer();
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,7 +157,7 @@ app.get('/', (req, res) => {
     const posts = getPosts();
     const users = getUsers(); // Get all users
     const user = getCurrentUser(req) || {};
-    const apiKey = process.env.EMOJI_API_KEY;
+    const apiKey = EMOJI_API_KEY;
     res.render('home', { posts, users, user, apiKey });
 });
 
@@ -126,8 +170,23 @@ app.get('/register', (req, res) => {
 // Login route GET route is used for error response from login
 //
 app.get('/login', (req, res) => {
-    res.render('loginRegister', { loginError: req.query.error });
+    //res.render('loginRegister', { loginError: req.query.error });
+    res.send('<a href="/auth/google">Authenticate with Google</a>')
 });
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] })
+)
+
+app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function(req, res) {
+        // Successful authentication
+        req.session.userId = req.user.id; // Or whatever your user identifier is
+        req.session.loggedIn = true;
+        res.redirect('/'); // Redirect to the home page for logged-in users
+    }
+);
 
 // Error route: render error page
 //
@@ -219,15 +278,12 @@ app.post('/register', (req, res) => {
 
 
 app.post('/login', (req, res) => {
-    // TODO: Login a user
     const { username } = req.body;
-
-    // Find user by username
     const user = findUserByUsername(username);
     if (user) {
         req.session.userId = user.id;
         req.session.loggedIn = true;
-        res.redirect('/');
+        res.redirect('/'); // Redirect to the home page for logged-in users
     } else {
         res.redirect('/login?error=Invalid+credentials');
     }
