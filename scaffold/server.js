@@ -171,7 +171,8 @@ app.get('/register', (req, res) => {
 //
 app.get('/login', (req, res) => {
     //res.render('loginRegister', { loginError: req.query.error });
-    res.send('<a href="/auth/google">Authenticate with Google</a>')
+    // res.send('<a href="/auth/google">Authenticate with Google</a>')
+    res.redirect('/auth/google'); 
 });
 
 app.get('/auth/google',
