@@ -2,6 +2,7 @@ const express = require('express');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const { createCanvas } = require('canvas');
+const initializeDB = require('./populatedb')
 require('dotenv').config();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Configuration and Setup
@@ -9,6 +10,19 @@ require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
+
+async function startServer() {
+    try {
+        await initializeDB();
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to initialize the database:', error);
+    }
+}
+
+startServer();
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -251,24 +265,6 @@ app.listen(PORT, () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Support Functions and Variables
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-// Example data for posts and users
-let posts = [
-    { id: 1, title: 'igpay atinlay', content: 'isthay isyay ayay amplesay ostpay.', username: 'SampleUser', timestamp: '2024-01-01 10:00', likes: 0 },
-    { id: 2, title: 'What did the fish say when he hit a wall?', content: 'Damn.', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-25 7:00', likes: 10 },
-    { id: 3, title: 'The Latin Pig?', content: 'Not much actual pig themed content here, huh?', username: 'Don\'tFightThePickles', timestamp: '2023-07-21 7:45', likes: 1 },
-    { id: 4, title: '???', content: 'I don\'t *know* pig latin!', username: 'Don\'tFightThePickles', timestamp: '2023-07-30 4:45', likes: 1 },
-    { id: 5, title: 'Teacup Pigs!', content: 'Have you ever *seen* a teacup pig?! They\'re adorable!', username: 'LeaveTheRatsAlone', timestamp: '2024-01-02 12:00', likes: 50 },
-    { id: 6, title: 'Many Aliases', content: 'People say unique aliases defeat the purpose of anonymity, but where\'s the fun in that?', username: 'Don\'tFightThePickles', timestamp: '2023-07-02 10:00', likes: 3 },
-    { id: 7, title: '🪜', content: 'This is my step ladder. I never knew my real ladder', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-27 8:00', likes: 1 },
-];
-let users = [
-    { id: 1, username: 'I\'veBuriedMyClocks', avatar_url: undefined, memberSince: '2024-01-01 08:00' },
-    { id: 2, username: 'LeaveTheRatsAlone', avatar_url: undefined, memberSince: '2024-01-02 09:00' },
-    { id: 3, username: 'Don\'tFightThePickles', avatar_url: undefined, memberSince: '2023-01-15 06:00' },
-    { id: 4, username: 'AlwaysMeasureTwiceCutOnce', avatar_url: undefined, memberSince: '2021-09-21 10:00' },
-    { id: 5, username: 'SampleUser', avatar_url: undefined, memberSince: '2021-03-19 10:00' },
-];
 
 // Function to find a user by username
 function findUserByUsername(username) {
