@@ -55,6 +55,7 @@
     var showModalBtn = document.getElementById("deleteAccountBtn");
     var closeModalBtn = document.getElementById("close-modal-btn");
     var confirmBtn = document.getElementById("modal-confirm-btn");
+    var usernameText = document.getElementById()
     var deleteConfirmationInput = document.getElementById("delete-confirmation");
     var orphanPostsCheckbox = document.getElementById("orphan-posts");
 
@@ -74,16 +75,29 @@
 
     confirmBtn.onclick = function() {
         var confirmationText = deleteConfirmationInput.value;
-        var orphanPosts = orphanPostsCheckbox.checked;
+        var isOrphanPosts = orphanPostsCheckbox.checked;
 
         if (confirmationText === "delete") {
             // Perform the account deletion process
             // Access all of user's posts and change the user linked the posts to "Orphaned Account"
-
-            console.log("Account deletion confirmed.");
+            fetch('/delete-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username: user.username, orphanPosts: isOrphanPosts})
+            })
+            .then(response => response.json())
+            .then(data => {
+            
+            console.log(data.message);
             modal.style.display = "none";
-        } else {
-            alert("Please type 'delete' to confirm");
-        }
+            // Redirect or refresh the page as needed
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        // Handle case where confirmation text is not correct
+        console.log("Confirmation failed.");
     }
+}
 </script>

@@ -3,11 +3,12 @@ const sqlite3 = require('sqlite3');
 
 // File name where the SQLite database will be stored
 const dbFileName = 'data.db';
+let db;
 
 async function initializeDB() {
 
     // Opens connection to the SQLite database
-    const db = await sqlite.open({ filename: dbFileName, driver: sqlite3.Database });
+    db = await sqlite.open({ filename: dbFileName, driver: sqlite3.Database });
 
     // Create the two tables
     await db.exec(`
@@ -48,6 +49,8 @@ async function initializeDB() {
         { title: '🪜', content: 'This is my step ladder. I never knew my real ladder', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-27 8:00', likes: 1 },
     ];
 
+    await deleteAllUsers();
+
     // Insert sample data into the database
     await Promise.all(users.map(user => {
         return db.run(
@@ -56,6 +59,7 @@ async function initializeDB() {
         );
     }));
 
+    console.log('users created');
     await Promise.all(posts.map(post => {
         return db.run(
             'INSERT INTO posts (title, content, username, timestamp, likes) VALUES (?, ?, ?, ?, ?)',
@@ -64,9 +68,29 @@ async function initializeDB() {
     }));
 
     console.log('Database populated with initial data.');
-    await db.close();
+    // await db.close();
 }
 
-initializeDB().catch(err => {
-    console.error('Error initializing database:', err);
-});
+// initializeDB().catch(err => {
+//     console.error('Error initializing database:', err);
+// });
+
+async function deleteAllUsers() {
+    db.exec('DELETE from users');
+    db.exec('DELETE from posts');
+}
+
+async function getAllPosts() {
+    return await db.all('SELECT * FROM posts');
+}
+
+async function getAllUsers() {
+    return await db.all('SELECT * FROM users');
+}
+
+// These functions other files can call
+module.exports = {
+    initializeDB,
+    getAllPosts, 
+    getAllUsers
+}

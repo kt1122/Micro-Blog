@@ -2,7 +2,7 @@ const express = require('express');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const { createCanvas } = require('canvas');
-const initializeDB = require('./populatedb')
+const { initializeDB, getAllPosts, getAllUsers } = require('./populatedb.js');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const dotenv = require('dotenv');
@@ -53,19 +53,6 @@ passport.deserializeUser((id, done) => {
     const user = users.find(u => u.id === id); // Deserialize the session by searching for the id
     done(null, user);
 });
-
-async function startServer() {
-    try {
-        await initializeDB();
-        app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
-        });
-    } catch (error) {
-        console.error('Failed to initialize the database:', error);
-    }
-}
-
-startServer();
 
 
 /*
@@ -153,12 +140,13 @@ app.use(express.json());                            // Parse JSON bodies (as sen
 // We pass the posts and user variables into the home
 // template
 //
-app.get('/', (req, res) => {
-    const posts = getPosts();
-    const users = getUsers(); // Get all users
-    const user = getCurrentUser(req) || {};
-    const apiKey = EMOJI_API_KEY;
-    res.render('home', { posts, users, user, apiKey });
+app.get('/', async (req, res) => {
+    const posts = await getAllPosts();
+    const users = await getUsers(); // Get all users
+    // const user = getCurrentUser(req) || {};
+    // const apiKey = process.env.EMOJI_API_KEY;
+    // res.render('home', { posts, users, user, apiKey });
+    res.render('home', { posts });
 });
 
 // Register GET route is used for error response from registration
@@ -310,13 +298,54 @@ app.post('/delete/:id', isAuthenticated, (req, res) => {
     }
 });
 
+app.post('/delete-account', (req, res) => {
+    const username = req.body.username;
+    const isOrphanPost = req.body.orphanPosts;
+
+    if (isOrphanPost) {
+        // Only orphan the posts by setting username to 'Orphaned Account'
+        db.run(`UPDATE posts SET username = 'Orphaned Account' WHERE username = ?`, [username], function(err) {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            deleteAccount(username, res);
+        });
+    } else {
+        // Delete the posts and then the user account
+        db.run(`DELETE FROM posts WHERE username = ?`, [username], function(err) {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            deleteAccount(username, res);
+        });
+    }
+});
+
+function deleteAccount(username, res) {
+    db.run(`DELETE FROM users WHERE username = ?`, [username], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: 'Account deleted successfully' });
+    });
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Server Activation
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+async function startServer() {
+    try {
+        await initializeDB();
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to initialize the database:', error);
+    }
+}
+
+startServer();
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Support Functions and Variables
@@ -333,8 +362,8 @@ function findUserById(userId) {
 }
 
 // Function to get all users
-function getUsers() {
-    return users;
+async function getUsers() {
+    return await getAllUsers();
 }
 
 // Function to add a new user
@@ -477,8 +506,8 @@ function getCurrentUser(req) {
 }
 
 // Function to get all posts, sorted by latest first
-function getPosts() {
-    return posts.slice().reverse();
+async function getPosts() {
+    return await getAllPosts();
 }
 
 // Function to add a new post
