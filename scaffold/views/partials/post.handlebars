@@ -114,18 +114,24 @@
             let isTranslated = pigBtnElement.getAttribute('data-translated') === 'true';
             if (!isTranslated) {
                 // Store the original text if not already translated
-                const originalText = postContentElement.innerText;
-                const translatedText = translateToPigLatin(originalText);
+                const translatedText = translateToPigLatin(postContentElement.innerText);
                 postContentElement.innerText = translatedText;
                 pigBtnElement.setAttribute('data-translated', 'true');
-                // pigBtnElement.setAttribute('data-original-text', originalText); // Store original text
                 pigBtnElement.innerText = "To English 🔤"; // Change button text to 'To English'
             } else {
-                // Retrieve the original text from the data-original-text attribute
-                // const originalText = pigBtnElement.getAttribute('data-original-text');
-                // postContentElement.innerText = originalText;
-                // pigBtnElement.setAttribute('data-translated', 'false');
-                pigBtnElement.innerText = "To Pig Latin 🐷"; // Change button text to 'To Pig Latin'
+                // Fetch original text from the server
+        fetch(`/post/${postId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    postContentElement.innerText = data.content;
+                    pigBtnElement.setAttribute('data-translated', 'false');
+                    pigBtnElement.innerText = "To Pig Latin 🐷"; // Change button text to 'To Pig Latin'
+                } else {
+                    console.error(data.message || 'Failed to fetch the original post content.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
             }
         }
     }
