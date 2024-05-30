@@ -33,7 +33,7 @@
     <section class="posts-list">
         <!-- recent posts -->
         <section class="recents">
-            <h2>Recent {{postNeoType}}s</h2>
+            <h2 id="post-header">{{#ifCond activeSort 'recent'}}Recent{{else}}Popular{{/ifCond}} {{postNeoType}}s</h2>
             <div id="filter-btn-container">
                 <button id="sort-recent" class="{{#ifCond activeSort 'recent'}}active-filter{{else}}{{/ifCond}}">Sort Recents</button>
                 <button id="sort-likes" class="{{#ifCond activeSort 'likes'}}active-filter{{else}}{{/ifCond}}">Sort Likes</button>
@@ -60,7 +60,7 @@
 
 {{! JavaScript for Emoji Integration }}
 <script>
-
+let postHeader = document.getElementById("post-header");
 const apiKey = '{{apiKey}}';
 const apiUrl = 'https://emoji-api.com/emojis';
 
@@ -135,11 +135,13 @@ function insertEmoji(emoji) {
 
 document.getElementById('sort-recent').addEventListener('click', function() {
     setActiveButton(this);
+    updateHeaderText('Recent');
     window.location.href = '/?sort=recent';
 });
 
 document.getElementById('sort-likes').addEventListener('click', function() {
     setActiveButton(this);
+    updateHeaderText('Popular');
     window.location.href = '/?sort=likes';
 });
 
@@ -148,6 +150,12 @@ function setActiveButton(activeButton) {
         btn.classList.remove('active-filter');
     });
     activeButton.classList.add('active-filter');
+}
+
+function updateHeaderText(sortType) {
+    let postHeader = document.getElementById("post-header");
+    let postType = '{{postNeoType}}'; // This variable is from Handlebars and is static after initial render
+    postHeader.innerHTML = `${sortType} ${postType}s`; // Update the header based on the sort type
 }
 
 </script>
