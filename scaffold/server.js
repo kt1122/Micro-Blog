@@ -200,16 +200,8 @@ app.get('/error', (req, res) => {
 // Get post content
 app.get('/post/:id', async (req, res) => {
     const postId = req.params.id;
-    try {
-        const post = await getPostById(postId);
-        if (post) {
-            res.json({ success: true, content: post.content });
-        } else {
-            res.status(404).send({ success: false, message: 'Post not found' });
-        }
-    } catch (error) {
-        res.status(500).send({ success: false, message: 'Internal server error' });
-    }
+    const post = await getPostById(postId);
+    res.json({ success: true, content: post.content });
 });
 
 async function getPostById(postId) {
@@ -279,15 +271,8 @@ app.get('/profile', isAuthenticated, async (req, res) => {
 
 app.get('/avatar/:username', async(req, res) => {
     try {
-        const user = await findUserByUsername(req.params.username);
-        if (!user) {
-            console.log('User not found:', req.params.username);
-            res.status(404).send('User not found');
-            return;
-        }
-
-        console.log('Generating avatar for user:', user.username);
-        const avatar = generateAvatar(user.username[0]);
+        const username = req.params.username;
+        const avatar = await generateAvatar(username);
         res.setHeader('Content-Type', 'image/png');
         res.send(avatar);
     } catch (error) {
@@ -295,6 +280,8 @@ app.get('/avatar/:username', async(req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 app.post('/register', (req, res) => {
     const { username, googleId } = req.body;
@@ -356,13 +343,13 @@ app.post('/delete-account', async (req, res) => {
 
     try {
         if (isOrphanPost) {
-            await db.run(`UPDATE posts SET username = 'Orphaned Account' WHERE username = ?`, [username]);
+            await db.run(`UPDATE posts SET username = 'Orphaned_Account' WHERE username = ?`, [username]);
         } else {
             await db.run(`DELETE FROM posts WHERE username = ?`, [username]);
         }
         await db.run(`DELETE FROM users WHERE username = ?`, [username]);
 
-        logoutUser(req, res);
+        await logoutUser(req, res); // This will handle the redirect and end the response
     } catch (error) {
         console.error('Error deleting account:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -489,12 +476,12 @@ async function getUsers() {
 }
 
 // Function to add a new user
-function addUser(username) {
+async function addUser(username) {
     // TODO: Create a new user object and add to users array
 }
 
 // Middleware to check if user is authenticated
-function isAuthenticated(req, res, next) {
+async function isAuthenticated(req, res, next) {
     console.log(req.session.userId);
     if (req.session.userId) {
         next();
@@ -545,9 +532,12 @@ async function loginUser(req, res) {
 }
 
 // Function to logout a user
-function logoutUser(req, res) {
-    req.session.destroy(() => {
-        res.redirect('/');
+async function logoutUser(req, res) {
+    return new Promise((resolve) => {
+        req.session.destroy(() => {
+            res.redirect('/');
+            resolve();
+        })
     })
 }
 
@@ -594,11 +584,20 @@ async function updatePostLikes(req, res) {
 let colors = ["#2D5D7B", "#80CED7", "#B2CEDE", "#8CDFD6", "#46B1C9", "#6DC0D5", 
 "#837CB6", "#68A357", "#629677", "#3581B8", "#AF3800", "#392F5A", "#757761", "#654F6F"]
 
-function generateAvatar(letter, width = 100, height = 100) {
-    try {
-        const canvas = createCanvas(width, height);
-        const ctx = canvas.getContext('2d');
+async function generateAvatar(username, width = 100, height = 100) {
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
 
+    if (username === 'Orphaned_Account') {
+        ctx.fillStyle = '#CCCCCC'; // Default background color for orphaned accounts
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.fillStyle = '#FBFBF3';  // Default text color
+        ctx.font = 'bold 48px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('?', width / 2, height / 2);
+    } else {
         ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]; // background color
         ctx.fillRect(0, 0, width, height);
 
@@ -606,13 +605,10 @@ function generateAvatar(letter, width = 100, height = 100) {
         ctx.font = 'bold 48px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(letter.toUpperCase(), width / 2, height / 2);
-
-        return canvas.toBuffer();
-    } catch (error) {
-        console.error('Error generating avatar:', error);
-        throw error;  // Re-throw the error after logging it
+        ctx.fillText(username[0].toUpperCase(), width / 2, height / 2);
     }
+   
+    return canvas.toBuffer();
 }
 
 // Function to get the current user from session

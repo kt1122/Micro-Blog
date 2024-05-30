@@ -113,7 +113,6 @@
         if (postContentElement) {
             let isTranslated = pigBtnElement.getAttribute('data-translated') === 'true';
             if (!isTranslated) {
-                // Store the original text if not already translated
                 const translatedText = translateToPigLatin(postContentElement.innerText);
                 postContentElement.innerText = translatedText;
                 pigBtnElement.setAttribute('data-translated', 'true');

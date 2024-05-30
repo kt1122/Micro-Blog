@@ -52,6 +52,7 @@
 
 <script>
     var user = { username: '{{user.username}}' };
+    console.log("MY NAME ", user.username);
     var modal = document.getElementById("delete-account-modal");
     var showModalBtn = document.getElementById("deleteAccountBtn");
     var closeModalBtn = document.getElementById("close-modal-btn");
@@ -65,7 +66,7 @@
 
     closeModalBtn.onclick = function() {
         modal.style.display = "none";
-    }   
+    }
 
     window.onclick = function(event) {
         if (event.target == modal) {
@@ -74,28 +75,28 @@
     }
 
     confirmBtn.onclick = function() {
-        var confirmationText = deleteConfirmationInput.value;
-        var isOrphanPosts = orphanPostsCheckbox.checked;
+    var confirmationText = deleteConfirmationInput.value;
+    var isOrphanPosts = orphanPostsCheckbox.checked;
 
-        if (confirmationText === "delete") {
-            // Perform the account deletion process
-            // Access all of user's posts and change the user linked the posts to "Orphaned Account"
-            fetch('/delete-account', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({username: user.username, orphanPosts: isOrphanPosts})
-            })
-            .then(response => response.json())
-            .then(data => {
-            
-            console.log(data.message);
-            modal.style.display = "none";
+    if (confirmationText === "delete") {
+        fetch('/delete-account', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: user.username, orphanPosts: isOrphanPosts })
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json().then(data => {
+                    console.error('Error:', data.message);
+                });
+            }
         })
         .catch(error => console.error('Error:', error));
     } else {
-        // Handle case where confirmation text is not correct
         console.log("Confirmation failed.");
     }
 }
