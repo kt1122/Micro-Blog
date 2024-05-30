@@ -51,11 +51,11 @@
 </div>
 
 <script>
+    var user = { username: '{{user.username}}' };
     var modal = document.getElementById("delete-account-modal");
     var showModalBtn = document.getElementById("deleteAccountBtn");
     var closeModalBtn = document.getElementById("close-modal-btn");
     var confirmBtn = document.getElementById("modal-confirm-btn");
-    var usernameText = document.getElementById()
     var deleteConfirmationInput = document.getElementById("delete-confirmation");
     var orphanPostsCheckbox = document.getElementById("orphan-posts");
 
@@ -92,7 +92,6 @@
             
             console.log(data.message);
             modal.style.display = "none";
-            // Redirect or refresh the page as needed
         })
         .catch(error => console.error('Error:', error));
     } else {
