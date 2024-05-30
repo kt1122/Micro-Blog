@@ -29,21 +29,23 @@ passport.use(new GoogleStrategy({
 }));
 
 function findOrCreateUser(profile, done) {
-    // Placeholder for user search by Google ID or email
     let user = users.find(u => u.googleId === profile.id);
-
-    if (!user) {
+    if (user) {
+        // User found, log them in
+        done(null, user);
+    } else {
+        // User not found, create new user
         user = {
-            id: users.length + 1, // increment for new user
+            id: users.length + 1, // Assume ID generation like this for simplicity
             username: profile.displayName,
-            googleId: profile.id, // save Google ID for future logins
+            googleId: profile.id,
             memberSince: new Date().toISOString()
         };
         users.push(user);
+        done(null, user);
     }
-
-    done(null, user);
 }
+
 
 passport.serializeUser((user, done) => {
     done(null, user.id); // Serialize by user.id assumed to be unique
@@ -164,7 +166,13 @@ app.get('/', (req, res) => {
 // Register GET route is used for error response from registration
 //
 app.get('/register', (req, res) => {
-    res.render('loginRegister', { regError: req.query.error });
+    let googleProfile = tempUsers[req.query.googleId];
+    if (googleProfile) {
+        // Render a specific registration page for Google-authenticated users
+        res.render('googleRegister', { profile: googleProfile });
+    } else {
+        res.render('register', { error: 'No Google profile found. Please try again.' });
+    }
 });
 
 // Login route GET route is used for error response from login
@@ -183,9 +191,9 @@ app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     function(req, res) {
         // Successful authentication
-        req.session.userId = req.user.id; // Or whatever your user identifier is
-        req.session.loggedIn = true;
-        res.redirect('/'); // Redirect to the home page for logged-in users
+        req.session.userId = req.user.id; // Set session user ID
+        req.session.loggedIn = true; // Set logged in status
+        res.redirect('/'); // Redirect to the home page
     }
 );
 
@@ -252,28 +260,22 @@ app.get('/profile', isAuthenticated, (req, res) => {
 app.get('/avatar/:username', handleAvatar);
 
 app.post('/register', (req, res) => {
-    // TODO: Register a new user
-    const { username } = req.body;
-    
-    // Check if the user already exists
-    const userExists = findUserByUsername(username);
-    if (userExists) {
+    const { username, googleId } = req.body;
+
+    if (users.some(u => u.username === username)) {
         return res.redirect('/register?error=User+already+exists');
     }
 
-    // Add the new user
     const newUser = {
         id: users.length + 1,
-        username,
+        username: username,
+        googleId: googleId,
         memberSince: new Date().toISOString()
     };
     users.push(newUser);
-
-    // Log the user in (set session data)
+    
     req.session.userId = newUser.id;
     req.session.loggedIn = true;
-
-    // Redirect to home page or profile page
     res.redirect('/');
 });
 
