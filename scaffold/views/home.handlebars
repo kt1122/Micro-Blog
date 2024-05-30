@@ -34,6 +34,11 @@
         <!-- recent posts -->
         <section class="recents">
             <h2>Recent {{postNeoType}}s</h2>
+            <div id="filter-btn-container">
+                <button id="sort-recent" class="{{#ifCond activeSort 'recent'}}active-filter{{else}}{{/ifCond}}">Sort Recents</button>
+                <button id="sort-likes" class="{{#ifCond activeSort 'likes'}}active-filter{{else}}{{/ifCond}}">Sort Likes</button>
+
+            </div>
         </section>
 
         <section class="postsList">
@@ -126,6 +131,23 @@ function insertEmoji(emoji) {
     textarea.value = text.substring(0, start) + emoji + text.substring(end);
     textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
     textarea.focus();  // Keep focus on the textarea
+}
+
+document.getElementById('sort-recent').addEventListener('click', function() {
+    setActiveButton(this);
+    window.location.href = '/?sort=recent';
+});
+
+document.getElementById('sort-likes').addEventListener('click', function() {
+    setActiveButton(this);
+    window.location.href = '/?sort=likes';
+});
+
+function setActiveButton(activeButton) {
+    document.querySelectorAll('button').forEach(btn => {
+        btn.classList.remove('active-filter');
+    });
+    activeButton.classList.add('active-filter');
 }
 
 </script>

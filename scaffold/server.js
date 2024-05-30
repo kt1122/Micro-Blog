@@ -159,12 +159,13 @@ app.use(express.json());                            // Parse JSON bodies (as sen
 // template
 //
 app.get('/', async (req, res) => {
-    const posts = await getPosts();
-    const users = await getUsers(); // Get all users
+    const sort = req.query.sort || 'recent';
+    const posts = await getPosts(sort);
+    const users = await getUsers();
     const user = await getCurrentUser(req) || {};
     console.log("I am ", user, "!");
     const apiKey = EMOJI_API_KEY;
-    res.render('home', { posts, users, user, apiKey });
+    res.render('home', { posts, users, user, apiKey, activeSort: sort });
 });
 
 // Register GET route is used for error response from registration
@@ -423,12 +424,12 @@ async function initializeDB() {
     ];
 
     const posts = [
-        { title: 'First Post', content: 'This is the first post', username: 'user1', timestamp: '2024-01-01 12:30:00', likes: 0 },
+        { title: 'First Post', content: 'This is the first post', username: 'user1', timestamp: '2018-01-01 12:30:00', likes: 0 },
         { title: 'igpay atinlay', content: 'isthay isyay ayay amplesay ostpay.', username: 'SampleUser', timestamp: '2024-01-01 10:00', likes: 0 },
         { title: 'What did the fish say when he hit a wall?', content: 'Damn.', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-25 7:00', likes: 10 },
         { title: 'The Latin Pig?', content: 'Not much actual pig themed content here, huh?', username: 'Don\'tFightThePickles', timestamp: '2023-07-21 7:45', likes: 1 },
         { title: '???', content: 'I don\'t *know* pig latin!', username: 'Don\'tFightThePickles', timestamp: '2023-07-30 4:45', likes: 1 },
-        { title: 'Teacup Pigs!', content: 'Have you ever *seen* a teacup pig?! They\'re adorable!', username: 'LeaveTheRatsAlone', timestamp: '2024-01-02 12:00', likes: 50 },
+        { title: 'Teacup Pigs!', content: 'Have you ever *seen* a teacup pig?! They\'re adorable!', username: 'LeaveTheRatsAlone', timestamp: '2023-01-02 12:00', likes: 50 },
         { title: 'Many Aliases', content: 'People say unique aliases defeat the purpose of anonymity, but where\'s the fun in that?', username: 'Don\'tFightThePickles', timestamp: '2023-07-02 10:00', likes: 3 },
         { title: '🪜', content: 'This is my step ladder. I never knew my real ladder', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-27 8:00', likes: 1 },
     ];
@@ -658,9 +659,13 @@ async function getCurrentUser(req) {
 }
 
 // Function to get all posts, sorted by latest first
-async function getPosts() {
+async function getPosts(sortType) {
+    let query = 'SELECT * FROM posts ORDER BY timestamp DESC';  // Default: recent
+    if (sortType === 'likes') {
+        query = 'SELECT * FROM posts ORDER BY likes DESC, timestamp DESC';  // Sort by likes and then by recent
+    }
     try {
-        const posts = await db.all('SELECT * FROM posts ORDER BY timestamp DESC');
+        const posts = await db.all(query);
         return posts;
     } catch (error) {
         console.error('Failed to fetch posts:', error);

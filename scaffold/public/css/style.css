@@ -249,6 +249,22 @@ button[type="submit"] {
     background-color: #FBFBF3;
 }
 
+#filter-btn-container{
+    align-items: center;
+}
+
+#sort-recent, #sort-likes {
+    width: 100px;
+    height: 25px;
+    padding: 2px;
+    color: #FBFBF3;
+    box-shadow: 3px 3px 5px 2px#F896AB;
+}
+
+.active-filter {
+    box-shadow: none !important;
+}
+
 .profile-avatar {
     position: fixed;
     top: 100px;
