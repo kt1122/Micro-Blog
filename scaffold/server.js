@@ -301,16 +301,14 @@ app.post('/register', async (req, res) => {
         // Create the new user in the database
         const newUser = await addUser({
             username: username,
-            hashedGoogleId: '',  // Set appropriately if using Google ID
-            avatar_url: '',      // Set an initial or default avatar URL if necessary
+            hashedGoogleId: '',  
+            avatar_url: '',      
             memberSince: new Date().toISOString()
         });
 
-        // Log the user in (set session data)
         req.session.userId = newUser.id;
         req.session.loggedIn = true;
 
-        // Redirect to home page or profile page
         res.redirect('/');
     } catch (error) {
         console.error('Registration failed:', error);
@@ -348,7 +346,7 @@ app.post('/login', (req, res) => {
 
 
 app.get('/logout', (req, res) => {
-    // TODO: Logout the user
+    
     req.session.destroy(() => {
         res.redirect('/');
     })
