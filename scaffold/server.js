@@ -356,7 +356,6 @@ app.get('/logout', (req, res) => {
 
 
 app.post('/delete/:id', isAuthenticated, (req, res) => {
-    // TODO: Delete a post if the current user is the owner
     const postId = parseInt(req.params.id);
     const postIndex = posts.findIndex(post => post.id === postId && post.username === findUserById(req.session.userId).username);
     if (postIndex !== -1) {
@@ -434,7 +433,12 @@ async function initializeDB() {
         { title: '🪜', content: 'This is my step ladder. I never knew my real ladder', username: 'AlwaysMeasureTwiceCutOnce', timestamp: '2023-07-27 8:00', likes: 1 },
     ];
 
-    await deleteAll();
+    /*
+        I added deleteAll() because once the database was created, any subsequent calls of 
+        initializeDB() would result in a uniqueness error. deleteAll() deletes the content
+        of the database and then puts the data back onto the file.
+    */
+    // await deleteAll();
 
     // Insert sample data into the database
     await Promise.all(users.map(user => {

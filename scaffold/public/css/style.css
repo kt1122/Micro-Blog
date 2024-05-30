@@ -328,6 +328,7 @@ button[type="submit"] {
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-shrink: 0;;
 }
 
 .post-avatar-container {
@@ -346,8 +347,9 @@ button[type="submit"] {
 .post-avatar {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the entire area without distortion */
-    border-radius: 10px; /* This matches the border-radius of the container */
+    object-fit: cover; 
+    border-radius: 10px;
+
 }
 
 
@@ -547,6 +549,11 @@ hr.solid {
     nav ul li {
         margin: 0px 5px;
         font-size: 10px;
+    }
+
+    .post-avatar-container {
+        width: 50px;  /* Smaller fixed width for small devices */
+        height: 50px; /* Smaller fixed height for small devices */
     }
 }
 
