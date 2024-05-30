@@ -8,6 +8,8 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const dotenv = require('dotenv');
 dotenv.config();
+const crypto = require('crypto');
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Configuration and Setup
@@ -31,13 +33,20 @@ passport.use(new GoogleStrategy({
     findOrCreateUser(profile, done);
 }));
 
+function hashGoogleID(id) {
+    return crypto.createHash('sha256').update(id).digest('hex');
+}
+
 async function findOrCreateUser(profile, done) {
+    const hashedGoogleId = hashGoogleID(profile.id);  // Hash the Google ID
+
     try {
-        let user = await db.get("SELECT * FROM users WHERE hashedGoogleId = ?", [profile.id]);
+        let user = await db.get("SELECT * FROM users WHERE hashedGoogleId = ?", [hashedGoogleId]);
 
         if (!user) {
-            const result = await db.run("INSERT INTO users (username, hashedGoogleId, memberSince) VALUES (?, ?, ?)", [profile.displayName, profile.id, new Date().toISOString()]);
-            user = { id: result.lastID, username: profile.displayName, hashedGoogleId: profile.id, memberSince: new Date().toISOString() };
+            // User not found in database, create a new user entry
+            const result = await db.run("INSERT INTO users (username, hashedGoogleId, memberSince) VALUES (?, ?, ?)", [profile.displayName, hashedGoogleId, new Date().toISOString()]);
+            user = { id: result.lastID, username: profile.displayName, hashedGoogleId: hashedGoogleId, memberSince: new Date().toISOString() };
         }
 
         done(null, user);
@@ -46,6 +55,7 @@ async function findOrCreateUser(profile, done) {
         done(error);
     }
 }
+
 
 
 passport.serializeUser((user, done) => {
