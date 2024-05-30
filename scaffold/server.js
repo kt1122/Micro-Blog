@@ -19,9 +19,9 @@ const dbFileName = 'data.db';
 let db;
 
 
-const CLIENT_ID = '513266850474-mk0caohdbcmt358l0s88lsgofb8n5k3c.apps.googleusercontent.com'
-const CLIENT_SECRET = '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';
-const EMOJI_API_KEY = '0960e467224eab16ed93d22d7f45378bc99177c1'
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const EMOJI_API_KEY = process.env.EMOJI_API_KEY;
 
 passport.use(new GoogleStrategy({
     clientID: CLIENT_ID,
@@ -153,7 +153,7 @@ app.get('/', async (req, res) => {
     const users = await getUsers(); // Get all users
     const user = await getCurrentUser(req) || {};
     console.log("I am ", user, "!");
-    const apiKey = process.env.EMOJI_API_KEY;
+    const apiKey = EMOJI_API_KEY;
     res.render('home', { posts, users, user, apiKey });
 });
 
