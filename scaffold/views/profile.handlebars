@@ -1,0 +1,103 @@
+{{! Use the main layout }}
+{{!< main }}
+
+<div class="profile-page">
+    <div class="profile-avatar">
+        <!-- Correct path for the default avatar image -->
+        <img src="/avatar/{{user.username}}" alt="User Avatar" class="profile-avatar">
+    </div>
+    <div class="profile-container">
+        <section class="profile-info">
+            <!-- user profile info -->
+            <h2>User Profile</h2>
+            <p><strong>Username:</strong> {{user.username}}</p>
+            <p><strong>Member since:</strong> {{user.memberSince}}</p>
+            <button id="deleteAccountBtn">Delete Account</button>
+        </section>
+    </div>
+
+    <div id="delete-account-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal-btn">&times;</span>
+            <h3>Now just a minute.</h3>
+            <p>Are you sure you want to delete your entire account? You'll lose your username 
+                and your posts forever, and we bet your content will be missed.</p>
+            <p> If you're sure, confirm by typing "delete" below. Check the box if you want to leave your posts up 
+                and orphan them instead of deleting them.</p>
+            <input type="text" id="delete-confirmation" placeholder="delete"> <br>
+            <input type="checkbox" id="orphan-posts"><label for="orphan-posts">Orphan all posts </label> <br> <br>
+            <button id="modal-confirm-btn">Confirm</button>
+        </div>
+    </div>
+
+    <div class="profilePost-container">
+        <section class="user-posts">
+            <!-- you can call posts tweets, or truths, or whatever, these are neologisms. Choose your own new in server.js -->
+            <h2>Your {{{postNeoType}}}s</h2>
+
+            <!-- you'll need to make this conditaionl and #each expression work -->
+            {{#if posts.length}}
+                <ul>
+                    {{#each posts}}
+                        {{> post this user=../user}}  
+                    {{/each}}
+                </ul>
+            {{else}}
+                <!-- fix this up with some helper functions and other handlebars expressions, or add you own character -->
+                <p>You have not posted yet.</p>
+            {{/if}}
+        </section>
+    </div>
+</div>
+
+<script>
+    var user = { username: '{{user.username}}' };
+    console.log("MY NAME ", user.username);
+    var modal = document.getElementById("delete-account-modal");
+    var showModalBtn = document.getElementById("deleteAccountBtn");
+    var closeModalBtn = document.getElementById("close-modal-btn");
+    var confirmBtn = document.getElementById("modal-confirm-btn");
+    var deleteConfirmationInput = document.getElementById("delete-confirmation");
+    var orphanPostsCheckbox = document.getElementById("orphan-posts");
+
+    showModalBtn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    closeModalBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    confirmBtn.onclick = function() {
+    var confirmationText = deleteConfirmationInput.value;
+    var isOrphanPosts = orphanPostsCheckbox.checked;
+
+    if (confirmationText === "delete") {
+        fetch('/delete-account', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: user.username, orphanPosts: isOrphanPosts })
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json().then(data => {
+                    console.error('Error:', data.message);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        console.log("Confirmation failed.");
+    }
+}
+</script>
