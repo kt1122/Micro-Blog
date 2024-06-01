@@ -37,7 +37,6 @@
             <div id="filter-btn-container">
                 <button id="sort-recent" class="{{#ifCond activeSort 'recent'}}active-filter{{else}}{{/ifCond}}">Sort Recents</button>
                 <button id="sort-likes" class="{{#ifCond activeSort 'likes'}}active-filter{{else}}{{/ifCond}}">Sort Likes</button>
-
             </div>
         </section>
 
@@ -157,6 +156,20 @@ function updateHeaderText(sortType) {
     let postType = '{{postNeoType}}'; // This variable is from Handlebars and is static after initial render
     postHeader.innerHTML = `${sortType} ${postType}s`; // Update the header based on the sort type
 }
+
+window.onload = function() {
+    var postForm = document.querySelector('.post-form');
+    var contentContainer = document.querySelector('.content-container');
+
+    // Check if the post-form is not visible
+    // offsetParent returns null if postForm isn't visible
+    if (!postForm || !postForm.offsetParent) {
+        contentContainer.style.flexDirection = 'column';
+        contentContainer.style.alignItems = 'center';
+        contentContainer.style.columnCount = '1';
+    }
+};
+
 
 </script>
 

@@ -18,6 +18,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    z-index: 1
 }
 
 header {
@@ -28,10 +29,12 @@ header {
     width: 100%;
     position: fixed;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin: 0px;
     padding: 0px 5px 0px 60px; /* top/bottom, left/right */
+    z-index: 10;
 }
 
 footer {
@@ -43,6 +46,7 @@ footer {
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: 1;
 }
 
 .logo {
@@ -62,10 +66,18 @@ footer {
     margin-left: 30px;
 }
 
+nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
 
 nav ul {
+    display: flex;
     list-style: none;
     padding: 0;
+    margin: 0;
     display: flex;
     align-items: center;
 }
@@ -88,6 +100,7 @@ nav ul li a:hover {
 .header-avatar {
     height: 40px;
     border-radius: 50%;
+    margin: 0px 5px;
 }
 
 /* container for both sections */
@@ -173,15 +186,14 @@ button[type="submit"] {
     width: 100%;
     height: 100%;
     column-count: 2;
-    margin-top: 60px;
+    margin-top: 80px;
     margin-bottom: 100px;
 
-    /* margin-top: 90px;
-    position: sticky;
-    display: flex;
-    flex-direction: row;
-    height: 400px; 
-    overflow-y: auto; */
+    /*
+        flex-direction: column;
+        align-items: center;
+        column-count: 1;
+    */
 }
 
 .post-form {
@@ -254,15 +266,18 @@ button[type="submit"] {
 }
 
 #sort-recent, #sort-likes {
-    width: 100px;
+    width: 120px;
     height: 25px;
     padding: 2px;
     color: #FBFBF3;
-    box-shadow: 3px 3px 5px 2px#F896AB;
+    background: linear-gradient(to bottom, #F896AB 0%, #F34E7C 100%);
+    border: 1px solid #F34E7C;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .active-filter {
-    box-shadow: none !important;
+    box-shadow: inset 3px 3px 3px rgba(0, 0, 0, 0.3) !important; /* Inward shadow when button is pressed */;
 }
 
 .profile-avatar {
@@ -383,7 +398,7 @@ hr.solid {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;     /* Sit on top */
+    z-index: 2;
     padding-top: 100px;
     left: 0;
     top: 0;
@@ -449,16 +464,25 @@ hr.solid {
         margin-top: 0;
         text-align: center;
     }
+
+    /* centers sort buttons */
+    .recents {
+        text-align: center;
+    }
 }
 
 /* small window screen */
-@media (max-width: 800px) {
+@media (max-width: 900px) {
     body {
         padding: 140px 30px 0px 30px;
     }
 
+    header {
+        justify-content: flex-start;
+    }
+
     .header-logo {
-        height: 76px;
+        height: 112px;
         width: auto;
         position: fixed;
         top: 0;
@@ -466,12 +490,12 @@ hr.solid {
     }
 
     #appName {
-        font-size: 25px;
-        margin-left: 40px;
+        font-size: 27px;
+        margin-left: 60px;
     }
     
 
-    .login-register {
+    /* .login-register {
         flex-direction: column;
     }
 
@@ -481,11 +505,20 @@ hr.solid {
         padding: 20px 20px 130px 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         width: 250px;
+    } */
+
+    nav {
+        width: 100%;
+        margin: 0;
+    }
+
+    nav ul {
+        justify-content: flex-end;
     }
 
     nav ul li {
-        margin: 0px 10px;
-        font-size: 13px;
+        margin: 0px 5px;
+        font-size: 14px;
     }
 
     .post-form, .post {
@@ -503,11 +536,15 @@ hr.solid {
 /* minimum desktop width */
 @media (max-width: 700px) {
     body {
-        padding: 90px 30px 0px 30px;
+        padding: 130px 30px 0px 30px;
+    }
+
+    header {
+        justify-content: flex-start;
     }
 
     .header-logo {
-        height: 47px;
+        height: 108px;
         width: auto;
         position: fixed;
         top: 0;
@@ -516,24 +553,37 @@ hr.solid {
 
     #appName {
         color: black;
-        font-size: 18px;
-        margin-left: 15px;
+        font-size: 25px;
+        margin-left: 60px;
+    }
+
+    nav {
+        width: 100%;
+        margin: 0;
+    }
+
+    nav ul {
+        justify-content: flex-end;
     }
 
     nav ul li {
-        margin: 0px 8px;
-        font-size: 12px;
+        margin: 0px 5px;
+        font-size: 16px;
     }
 }
 
 /* phone dimensions */
-@media (max-width: 480px) {
+@media (max-width: 580px) {
     body {
         padding: 110px 30px 0px 30px;
     }
 
+    header {
+        justify-content: flex-start;
+    }
+
     .header-logo {
-        height: 76px;
+        height: 96px;
         width: auto;
         position: fixed;
         top: 0;
@@ -546,14 +596,18 @@ hr.solid {
         margin-left: 40px;
     }
 
-    nav ul li {
-        margin: 0px 5px;
-        font-size: 10px;
+    nav {
+        width: 100%;
+        margin: 0;
     }
 
-    .post-avatar-container {
-        width: 50px;  /* Smaller fixed width for small devices */
-        height: 50px; /* Smaller fixed height for small devices */
+    nav ul {
+        justify-content: flex-end;
+    }
+
+    nav ul li {
+        margin: 0px 5px;
+        font-size: 14px;
     }
 }
 
