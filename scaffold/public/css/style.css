@@ -346,7 +346,7 @@ button[type="submit"] {
     flex-shrink: 0;;
 }
 
-.post-avatar-container {
+.post-avatar-container img{
     width: 60px;
     height: 60px;
     border: 1px solid #F34E7C;
